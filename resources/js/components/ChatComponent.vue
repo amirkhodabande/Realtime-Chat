@@ -6,11 +6,11 @@
                   v-chat-scroll
             >
                   <message
-                        v-for="message in chat.messages"
-                        :key="message.index"
+                        v-for="data in chat.messages"
+                        :key="data.index"
                         color="warning"
                   >
-                        {{ message }}
+                        {{ data.message }}
                   </message>
             </ul>
             <input
@@ -32,6 +32,9 @@ export default {
       components: {
             message: require("./children/Message.vue").default,
       },
+      mounted() {
+            this.listen();
+      },
       data() {
             return {
                   message: "",
@@ -41,6 +44,11 @@ export default {
             };
       },
       methods: {
+            listen() {
+                  Echo.private("chat").listen("NewMessage", (response) => {
+                        this.chat.messages.push(response);
+                  });
+            },
             send() {
                   if (this.message.length > 0) {
                         this.chat.messages.push(this.message);
