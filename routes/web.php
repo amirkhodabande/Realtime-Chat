@@ -16,8 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::resource('/chat', 'ChatController');
+Route::apiResource('/chat', 'ChatController');
 
 Auth::routes();
+
 
 Route::get('/home', 'HomeController@index')->name('home');
