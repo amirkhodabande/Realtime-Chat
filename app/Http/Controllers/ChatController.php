@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewMessage;
+use App\User;
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth', ['only' => ['store', 'show']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,16 +23,6 @@ class ChatController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -34,7 +30,8 @@ class ChatController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = auth()->user();
+        event(new NewMessage($request->message, $user));
     }
 
     /**
@@ -45,7 +42,8 @@ class ChatController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = auth()->user();
+        event(new NewMessage("Lst", $user));
     }
 
     /**
