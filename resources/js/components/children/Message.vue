@@ -24,6 +24,13 @@ export default {
                   return "badge-" + this.color;
             },
       },
+      //   methods: {
+      //         listen() {
+      //               Echo.channel("chat").listen("NewMessage", (message) => {
+      //                     console.log(message);
+      //               });
+      //         },
+      //   },
 };
 </script>
 
