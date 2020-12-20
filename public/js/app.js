@@ -1951,6 +1951,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -2006,11 +2007,13 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_chat_scroll__WEBPACK_IMPORTED
 
       if (this.message.length > 0) {
         axios.post("/chat", {
-          message: this.message
+          message: this.message,
+          time: this.getTime()
         }).then(function (response) {
           _this3.chat.messages.push({
             message: _this3.message,
-            user: "You"
+            user: "You",
+            time: _this3.getTime()
           });
 
           _this3.message = "";
@@ -2018,6 +2021,10 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_chat_scroll__WEBPACK_IMPORTED
           console.log("Error, please try later.");
         });
       }
+    },
+    getTime: function getTime() {
+      var time = new Date();
+      return time.getHours() + ":" + time.getMinutes();
     }
   }
 });
@@ -2066,6 +2073,13 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -44567,6 +44581,13 @@ var render = function() {
                 },
                 proxy: true
               },
+              {
+                key: "time",
+                fn: function() {
+                  return [_vm._v(_vm._s(data.time))]
+                },
+                proxy: true
+              },
               data.user == "You"
                 ? {
                     key: "color",
@@ -44693,12 +44714,13 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c(
-      "li",
-      { staticClass: "list-group-item ", class: _vm.className },
-      [_vm._t("message")],
-      2
-    ),
+    _c("li", { staticClass: "list-group-item ", class: _vm.className }, [
+      _c("div", { staticClass: "d-flex flex-wrap justify-content-between" }, [
+        _c("aside", { staticClass: "col-10" }, [_vm._t("message")], 2),
+        _vm._v(" "),
+        _c("aside", { staticClass: "col-2" }, [_vm._t("time")], 2)
+      ])
+    ]),
     _vm._v(" "),
     _c(
       "small",

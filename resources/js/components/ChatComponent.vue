@@ -16,6 +16,7 @@
                   >
                         <template #message>{{ data.message }}</template>
                         <template #user>{{ data.user }}</template>
+                        <template #time>{{ data.time }}</template>
                         <template
                               #color
                               v-if="data.user == 'You'"
@@ -93,11 +94,13 @@ export default {
                   if (this.message.length > 0) {
                         axios.post(`/chat`, {
                               message: this.message,
+                              time: this.getTime(),
                         })
                               .then((response) => {
                                     this.chat.messages.push({
                                           message: this.message,
                                           user: "You",
+                                          time: this.getTime(),
                                     });
                                     this.message = "";
                               })
@@ -105,6 +108,10 @@ export default {
                                     console.log("Error, please try later.");
                               });
                   }
+            },
+            getTime() {
+                  let time = new Date();
+                  return time.getHours() + ":" + time.getMinutes();
             },
       },
 };

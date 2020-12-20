@@ -4,7 +4,14 @@
                   class="list-group-item "
                   :class="className"
             >
-                  <slot name="message"></slot>
+                  <div class="d-flex flex-wrap justify-content-between">
+                        <aside class="col-10">
+                              <slot name="message"></slot>
+                        </aside>
+                        <aside class="col-2">
+                              <slot name="time"></slot>
+                        </aside>
+                  </div>
             </li>
             <small
                   class="badge float-right"
