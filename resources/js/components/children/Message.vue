@@ -4,33 +4,33 @@
                   class="list-group-item "
                   :class="className"
             >
-                  <slot></slot>
+                  <slot name="message"></slot>
             </li>
             <small
                   class="badge float-right"
                   :class="badgeClassName"
-            >You</small>
+            >
+                  <slot name="user"></slot>
+            </small>
       </div>
 </template>
 
 <script>
 export default {
-      props: ["message", "color"],
+      data() {
+            return {
+                  colors: this.$slots,
+            };
+      },
+
       computed: {
             className() {
-                  return "list-group-item-" + this.color;
+                  return "list-group-item-" + this.colors.color[0].text;
             },
             badgeClassName() {
-                  return "badge-" + this.color;
+                  return "badge-" + this.colors.color[0].text;
             },
       },
-      //   methods: {
-      //         listen() {
-      //               Echo.channel("chat").listen("NewMessage", (message) => {
-      //                     console.log(message);
-      //               });
-      //         },
-      //   },
 };
 </script>
 
