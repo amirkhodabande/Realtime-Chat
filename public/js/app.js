@@ -1938,6 +1938,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -1954,8 +1967,16 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_chat_scroll__WEBPACK_IMPORTED
       message: "",
       chat: {
         messages: []
-      }
+      },
+      typing: false
     };
+  },
+  watch: {
+    message: function message() {
+      Echo["private"]("chat").whisper("typing", {
+        name: this.message
+      });
+    }
   },
   methods: {
     listen: function listen() {
@@ -1963,12 +1984,39 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_chat_scroll__WEBPACK_IMPORTED
 
       Echo["private"]("chat").listen("NewMessage", function (response) {
         _this.chat.messages.push(response);
+      }).listenForWhisper("typing", function (e) {
+        if (e.name != "") {
+          _this.typing = true;
+        } else {
+          _this.typing = false;
+        }
+      });
+    },
+    getComments: function getComments() {
+      var _this2 = this;
+
+      axios.get("/chat").then(function (response) {
+        _this2.chat.messages = response.data;
+      })["catch"](function (error) {
+        console.log("Error, we cant load messages! Please refresh your page.");
       });
     },
     send: function send() {
+      var _this3 = this;
+
       if (this.message.length > 0) {
-        this.chat.messages.push(this.message);
-        this.message = "";
+        axios.post("/chat", {
+          message: this.message
+        }).then(function (response) {
+          _this3.chat.messages.push({
+            message: _this3.message,
+            user: "You"
+          });
+
+          _this3.message = "";
+        })["catch"](function (error) {
+          console.log("Error, please try later.");
+        });
       }
     }
   }
@@ -2033,23 +2081,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["message", "color"],
+  data: function data() {
+    return {
+      colors: this.$slots
+    };
+  },
   computed: {
     className: function className() {
-      return "list-group-item-" + this.color;
+      return "list-group-item-" + this.colors.color[0].text;
     },
     badgeClassName: function badgeClassName() {
-      return "badge-" + this.color;
+      return "badge-" + this.colors.color[0].text;
     }
-  } //   methods: {
-  //         listen() {
-  //               Echo.channel("chat").listen("NewMessage", (message) => {
-  //                     console.log(message);
-  //               });
-  //         },
-  //   },
-
+  }
 });
 
 /***/ }),
@@ -44485,9 +44532,14 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: " m-auto col-4" }, [
+  return _c("div", { staticClass: " m-auto col-sm-10 col-md-5 " }, [
     _c("li", { staticClass: "list-group-item active rounded-top" }, [
-      _vm._v("Chatroom")
+      _vm._v("Chatroom\n            "),
+      _vm.typing == true
+        ? _c("small", { staticClass: "badge badge-info text-white" }, [
+            _c("i", [_vm._v("Typing...")])
+          ])
+        : _vm._e()
     ]),
     _vm._v(" "),
     _c(
@@ -44497,11 +44549,44 @@ var render = function() {
         staticClass: "list-group"
       },
       _vm._l(_vm.chat.messages, function(data) {
-        return _c("message", { key: data.index, attrs: { color: "warning" } }, [
-          _vm._v(
-            "\n                  " + _vm._s(data.message) + "\n            "
+        return _c("message", {
+          key: data.index,
+          scopedSlots: _vm._u(
+            [
+              {
+                key: "message",
+                fn: function() {
+                  return [_vm._v(_vm._s(data.message))]
+                },
+                proxy: true
+              },
+              {
+                key: "user",
+                fn: function() {
+                  return [_vm._v(_vm._s(data.user))]
+                },
+                proxy: true
+              },
+              data.user == "You"
+                ? {
+                    key: "color",
+                    fn: function() {
+                      return [_vm._v("success")]
+                    },
+                    proxy: true
+                  }
+                : {
+                    key: "color",
+                    fn: function() {
+                      return [_vm._v("warning")]
+                    },
+                    proxy: true
+                  }
+            ],
+            null,
+            true
           )
-        ])
+        })
       }),
       1
     ),
@@ -44611,14 +44696,15 @@ var render = function() {
     _c(
       "li",
       { staticClass: "list-group-item ", class: _vm.className },
-      [_vm._t("default")],
+      [_vm._t("message")],
       2
     ),
     _vm._v(" "),
     _c(
       "small",
       { staticClass: "badge float-right", class: _vm.badgeClassName },
-      [_vm._v("You")]
+      [_vm._t("user")],
+      2
     )
   ])
 }

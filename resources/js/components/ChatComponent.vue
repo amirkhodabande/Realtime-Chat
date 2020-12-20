@@ -1,6 +1,11 @@
 <template>
-      <div class=" m-auto col-4">
-            <li class="list-group-item active rounded-top">Chatroom</li>
+      <div class=" m-auto col-sm-10 col-md-5 ">
+            <li class="list-group-item active rounded-top">Chatroom
+                  <small
+                        v-if="typing == true"
+                        class="badge badge-info text-white"
+                  ><i>Typing...</i></small>
+            </li>
             <ul
                   class="list-group"
                   v-chat-scroll
@@ -8,9 +13,17 @@
                   <message
                         v-for="data in chat.messages"
                         :key="data.index"
-                        color="warning"
                   >
-                        {{ data.message }}
+                        <template #message>{{ data.message }}</template>
+                        <template #user>{{ data.user }}</template>
+                        <template
+                              #color
+                              v-if="data.user == 'You'"
+                        >success</template>
+                        <template
+                              #color
+                              v-else
+                        >warning</template>
                   </message>
             </ul>
             <input
@@ -41,18 +54,56 @@ export default {
                   chat: {
                         messages: [],
                   },
+                  typing: false,
             };
+      },
+      watch: {
+            message() {
+                  Echo.private("chat").whisper("typing", {
+                        name: this.message,
+                  });
+            },
       },
       methods: {
             listen() {
-                  Echo.private("chat").listen("NewMessage", (response) => {
-                        this.chat.messages.push(response);
-                  });
+                  Echo.private("chat")
+                        .listen("NewMessage", (response) => {
+                              this.chat.messages.push(response);
+                        })
+                        .listenForWhisper("typing", (e) => {
+                              if (e.name != "") {
+                                    this.typing = true;
+                              } else {
+                                    this.typing = false;
+                              }
+                        });
+            },
+            getComments() {
+                  axios.get(`/chat`)
+                        .then((response) => {
+                              this.chat.messages = response.data;
+                        })
+                        .catch(function (error) {
+                              console.log(
+                                    "Error, we cant load messages! Please refresh your page."
+                              );
+                        });
             },
             send() {
                   if (this.message.length > 0) {
-                        this.chat.messages.push(this.message);
-                        this.message = "";
+                        axios.post(`/chat`, {
+                              message: this.message,
+                        })
+                              .then((response) => {
+                                    this.chat.messages.push({
+                                          message: this.message,
+                                          user: "You",
+                                    });
+                                    this.message = "";
+                              })
+                              .catch((error) => {
+                                    console.log("Error, please try later.");
+                              });
                   }
             },
       },
