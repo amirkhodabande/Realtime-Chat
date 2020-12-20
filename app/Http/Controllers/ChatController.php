@@ -31,7 +31,7 @@ class ChatController extends Controller
     public function store(Request $request)
     {
         $user = auth()->user();
-        event(new NewMessage($request->message, $user));
+        broadcast(new NewMessage($request->message, $user))->toOthers();
     }
 
     /**
