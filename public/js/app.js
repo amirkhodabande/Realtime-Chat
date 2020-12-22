@@ -2039,7 +2039,7 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(v_toaster__WEBPACK_IMPORTED_MODUL
         }).then(function (response) {
           _this3.chat.messages.push({
             message: _this3.message,
-            user: "You",
+            user_id: "You",
             time: _this3.getTime()
           });
 
@@ -44682,7 +44682,7 @@ var render = function() {
               {
                 key: "user",
                 fn: function() {
-                  return [_vm._v(_vm._s(data.user))]
+                  return [_vm._v(_vm._s(data.user_id))]
                 },
                 proxy: true
               },
@@ -44693,7 +44693,7 @@ var render = function() {
                 },
                 proxy: true
               },
-              data.user == "You"
+              data.user_id == "You"
                 ? {
                     key: "color",
                     fn: function() {

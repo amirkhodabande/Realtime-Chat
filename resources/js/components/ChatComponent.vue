@@ -18,11 +18,11 @@
                         :key="data.index"
                   >
                         <template #message>{{ data.message }}</template>
-                        <template #user>{{ data.user }}</template>
+                        <template #user>{{ data.user_id }}</template>
                         <template #time>{{ data.time }}</template>
                         <template
                               #color
-                              v-if="data.user == 'You'"
+                              v-if="data.user_id == 'You'"
                         >success</template>
                         <template
                               #color
@@ -127,7 +127,7 @@ export default {
                               .then((response) => {
                                     this.chat.messages.push({
                                           message: this.message,
-                                          user: "You",
+                                          user_id: "You",
                                           time: this.getTime(),
                                     });
                                     this.message = "";
