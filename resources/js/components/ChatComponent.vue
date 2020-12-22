@@ -1,10 +1,13 @@
 <template>
       <div class=" m-auto col-sm-10 col-md-5 ">
-            <li class="list-group-item active rounded-top">Chatroom
-                  <small
-                        v-if="typing == true"
-                        class="badge badge-info text-white"
-                  ><i>Typing...</i></small>
+            <li class="list-group-item active pt-4  rounded-top d-flex flex-wrap justify-content-between">
+                  <p>Chatroom
+                        <small
+                              v-if="typing == true"
+                              class="badge badge-info text-white"
+                        ><i>Typing...</i></small>
+                  </p>
+                  <p class="badg badge-pill badge-light text-primary border border-info">{{ numberOfUsers }}</p>
             </li>
             <ul
                   class="list-group"
@@ -39,14 +42,22 @@
 
 <script>
 import Vue from "vue";
+
+// Auto Scrolling
 import VueChatScroll from "vue-chat-scroll";
-import Message from "./children/Message.vue";
 Vue.use(VueChatScroll);
+// Notifications
+import Toaster from "v-toaster";
+import "v-toaster/dist/v-toaster.css";
+Vue.use(Toaster, { timeout: 5000 });
+
+import Message from "./children/Message.vue";
 export default {
       components: {
             message: require("./children/Message.vue").default,
       },
       mounted() {
+            this.getMessages();
             this.listen();
       },
       data() {
@@ -56,6 +67,7 @@ export default {
                         messages: [],
                   },
                   typing: false,
+                  numberOfUsers: 0,
             };
       },
       watch: {
@@ -78,9 +90,25 @@ export default {
                                     this.typing = false;
                               }
                         });
+                  Echo.join("chat")
+                        .here((users) => {
+                              this.numberOfUsers = users.length;
+                        })
+                        .joining((user) => {
+                              this.numberOfUsers += 1;
+                              this.$toaster.success(
+                                    `${user.name} Joined to this room.`
+                              );
+                        })
+                        .leaving((user) => {
+                              this.numberOfUsers -= 1;
+                              this.$toaster.warning(
+                                    `${user.name} Leaved this room.`
+                              );
+                        });
             },
-            getComments() {
-                  axios.get(`/chat`)
+            getMessages() {
+                  axios.get(`/api/chat`)
                         .then((response) => {
                               this.chat.messages = response.data;
                         })
