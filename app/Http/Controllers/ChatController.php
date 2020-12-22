@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Chat;
 use App\Events\NewMessage;
 use App\User;
 use Illuminate\Http\Request;
@@ -19,7 +20,22 @@ class ChatController extends Controller
      */
     public function index()
     {
-        return view("chat");
+        return view('chat');
+    }
+
+    public function indexApi()
+    {
+        $chats = Chat::all();
+        foreach ($chats as $key => $chat) {
+            if ($chats[$key]->user == auth()->user()->id)
+                $chats[$key]->user = "You";
+            else
+                $chats[$key]->user = User::find($chats[$key]->user)->name;
+        }
+        return response()->json(
+            $chats,
+            200
+        );
     }
 
     /**
@@ -31,7 +47,15 @@ class ChatController extends Controller
     public function store(Request $request)
     {
         $user = auth()->user();
+        $chat = Chat::create(
+            [
+                'user' => $user->id,
+                'message' => $request->message,
+                'time' => $request->time,
+            ]
+        );
         broadcast(new NewMessage($request->message, $user))->toOthers();
+        return response()->json($chat, 201);
     }
 
     /**
