@@ -20,3 +20,6 @@
 </p>
 
 **Be Happy:)**
+
+![alt](https://github.com/amirkhodabande/Realtime-Chat/blob/master/public/git-images/TypingEvent.png)
+![alt](https://github.com/amirkhodabande/Realtime-Chat/blob/master/public/git-images/JoiningAndLeavingEvents.png)
