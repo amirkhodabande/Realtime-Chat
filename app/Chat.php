@@ -8,6 +8,6 @@ class Chat extends Model
 {
     public $timestamps = false;
     protected $fillable = [
-        'user', 'message', 'time'
+        'user_id', 'message', 'time'
     ];
 }
