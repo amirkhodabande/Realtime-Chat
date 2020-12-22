@@ -1,5 +1,7 @@
 <?php
 
+use App\Chat;
+use App\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -11,6 +13,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        factory(User::class, 6)->create()->each(function ($u) {
+            for ($i = 0; $i <= 4; $i++) {
+                $u->messages()->save(factory(Chat::class)->make());
+            }
+        });
     }
 }
