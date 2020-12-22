@@ -27,10 +27,10 @@ class ChatController extends Controller
     {
         $chats = Chat::all();
         foreach ($chats as $key => $chat) {
-            if ($chats[$key]->user == auth()->user()->id)
-                $chats[$key]->user = "You";
+            if ($chats[$key]->user_id == auth()->user()->id)
+                $chats[$key]->user_id = "You";
             else
-                $chats[$key]->user = User::find($chats[$key]->user)->name;
+                $chats[$key]->user_id = User::find($chats[$key]->user_id)->name;
         }
         return response()->json(
             $chats,
@@ -49,7 +49,7 @@ class ChatController extends Controller
         $user = auth()->user();
         $chat = Chat::create(
             [
-                'user' => $user->id,
+                'user_id' => $user->id,
                 'message' => $request->message,
                 'time' => $request->time,
             ]
