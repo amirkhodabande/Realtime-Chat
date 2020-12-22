@@ -13,9 +13,10 @@
    : `php artisan db:seed`
 5. Serve the websockets server via this command
    : `php artisan websockets:serve`
+6. Go to '/laravel-websockets' and click connect button.
 
 <p align="center">
-## Done, go to the '/chat' and...
+## Done, go to the '/chat' and test the main chatroom.
 </p>
 
 **Be Happy:)**
